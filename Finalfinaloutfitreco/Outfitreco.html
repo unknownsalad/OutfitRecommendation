@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Outfit of the Day</title>
+    <style>
+      /*😸Styling for the body😸*/
+      body {
+          font-family: Arial, sans-serif;
+          background: linear-gradient(to bottom right, #EDDBE1, #D8AEC9, #89B7E9, #87CEEB, #B0E0E6, #E7CBD5, #E3E29E, #DBD3CF);
+          height: 100vh;
+          text-align: center;
+      }
+      /*😸Container styling😸*/
+      .container {
+          max-width: 600px;
+          margin: 0 auto;
+          padding: 20px;
+      }
+      /*😸Title styling😸*/
+      .title {
+          font-family: serif;
+          font-size: 75px;
+          font-weight: bold;
+          color: #2196F3;
+      }
+      /*😸Subtitle styling😸*/
+      .subtitle {
+          font-size: 35px;
+          color: #2195F3;
+      }
+      /*😸Input container styling😸*/
+      .input-container {
+          margin: 20px 0;
+      }
+      /*😸Input field styling😸*/
+      .input-container input {
+          width: 100%;
+          padding: 10px;
+          font-size: 16px;
+          border: 1px solid #ccc;
+          border-radius: 5px;
+      }
+      /*😸Weather icon styling😸*/
+      .weather-icon {
+          font-size: 100px;
+      }
+      /*😸Temperature display styling😸*/
+      .temperature {
+          font-size: 38px;
+          color: rgba(0, 0, 0, 0.68);
+      }
+      /*😸Style for the "GENERATE OUTFIT" button😸*/
+      .generate-button {
+          display: inline-block;
+          padding: 10px 20px;
+          font-size: 18px;
+          color: #fff;
+          background-color: #2196F3;
+          border: none;
+          border-radius: 5px;
+          cursor: pointer;
+      }
+      /*😸Change button color when hovered😸*/
+      .generate-button:hover {
+          background-color: #7c19d2;
+      }
+  </style>
+</head>
+<body>
+    <!-- 😸The outfit recommendation interface format😸 -->
+    <div class="container">
+        <div class="title">OUTFIT</div>
+        <div class="subtitle">OF THE DAY</div>
+        <div class="input-container">
+            <input type="text" id="place-input" placeholder="Enter Place">
+    </div>
+    <div id="weather-icon" class="weather-icon">☁️</div>
+        <img id="weather-gif" src="https://media.giphy.com/media/l3q2K5jinAlChoCLS/giphy.gif" alt="Weather GIF" width="300" height="200">
+    <div id="temperature" class="temperature">--°C</div>
+    <button class="generate-button" onclick="generateOutfit()">GENERATE OUTFIT</button>
+    <script>
+      // 😸Add event listener to trigger outfit generation on Enter key press😸
+        document.getElementById('place-input').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                generateOutfit();
+            }
+        });
+    </script>
+    </div>
+
+    <script>
+        //😸API key and default place for weather data😸
+        const apiKey = '0ddb9f3b0e7f7686a86968ca33cfc12f';
+        let temperature = '';
+        let place = 'Quezon City';
+
+        //😸Add event listener to fetch weather data when city input changes😸
+        document.getElementById('place-input').addEventListener('input', function(event) {
+            place = event.target.value;
+                fetchWeather();
+        });
+
+        //😸Fetch weather data from OpenWeatherMap API😸
+        function fetchWeather() {
+            fetch(`https://api.openweathermap.org/data/2.5/weather?q=${place}&appid=${apiKey}&units=metric`)
+                .then(response => response.json())
+                .then(data => {
+                    temperature = data.main.temp.toString();
+                    updateWeatherUI();
+                })
+            //😸Handle fetch error😸
+            .catch(error => {
+                temperature = 'Error';
+                updateWeatherUI();
+            });
+        }
+
+        //😸Update the weather UI based on fetched data😸
+        function updateWeatherUI() {
+            const temp = parseFloat(temperature);
+
+        //😸Change weather icon and GIF based on temperature range😸
+        if (temp <= 24.99) {
+            weatherGif = 'https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExeW92aXJvNzMzZjc2enhhcHdvYzRuZjIwdzFuNzRwb2l6eTJjaHpvbSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3o6gDYJBQLIHFZoWL6/giphy.gif';
+            weatherIcon = '☔';
+        } else if (temp >= 25 && temp <= 29.99) {
+            weatherGif = 'https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExa3MzdjN5Zmx4dmpqNDZiY29wYXZib2gybzA1NXZzMjFpZWcydmEzNiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/VDGOdvmp1bpc3PcCry/giphy.gif';
+            weatherIcon = '☁️';
+        } else if (temp >= 30) {
+            weatherGif = 'https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExNHZzOGxpdWYwNzZpdmg3bDI2ZGZlaW1zb3ZydmgyYnF0bDVpMDlkMCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/x2iBOqCUFFGbFE5jpc/giphy.gif';
+            weatherIcon = '☀️';
+        } else {
+            weatherGif = 'https://media.giphy.com/media/l3q2K5jinAlChoCLS/giphy.gif';
+            weatherIcon = '❓';
+        }
+
+        //😸Update the DOM elements with new weather data😸
+        document.getElementById('weather-icon').textContent = weatherIcon;
+        document.getElementById('weather-gif').src = weatherGif;
+        document.getElementById('temperature').textContent = `${temperature}°C`;
+        } 
+
+        //😸Store temperature in local storage and navigate to generateOutfit.html😸
+        function generateOutfit() {
+            localStorage.setItem('temperature', temperature);
+            window.location.href = 'generateOutfit.html';
+        }
+
+        //😸Initial fetch of weather data😸
+        fetchWeather();
+    </script>
+</body>
+</html>
